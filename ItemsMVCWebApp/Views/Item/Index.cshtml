@@ -1,29 +1,50 @@
 ﻿@model List<ItemsMVCWebApp.Models.Item>
 
-<h2>Items List</h2>
+<div class="container mt-4">
 
-<a href="/Item/Create">Add New Item</a>
+    <!-- 🔹 Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Items List</h2>
+        <a href="/Item/Create" class="btn btn-primary">
+            + Add New Item
+        </a>
+    </div>
 
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Actions</th>
-    </tr>
+    <!-- 🔹 Card Wrapper -->
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.Description</td>
-            <td>
-                <a href="/Item/Edit/@item.Id">Edit</a>
+            <!-- 🔹 Table -->
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th style="width:120px;">Actions</th>
+                    </tr>
+                </thead>
 
-                <a href="/Item/Delete/@item.Id"
-                   onclick="return confirm('Are you sure you want to delete this item?');">
-                    Delete
-                </a>
-            </td>
-        </tr>
-    }
-</table>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <form action="/Item/Delete/@item.Id" method="post" class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>

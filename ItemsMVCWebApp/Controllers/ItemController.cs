@@ -22,7 +22,7 @@ public class ItemController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddItemAjax(Item item)
+    public async Task<ActionResult> AddItemAsync(Item item)
     {
         if (ModelState.IsValid)
         {

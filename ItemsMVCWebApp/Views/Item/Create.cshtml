@@ -1,13 +1,31 @@
 ﻿@model ItemsMVCWebApp.Models.Item
 
-<h2>Add Item</h2>
+<div class="container mt-4">
 
-<input id="name" placeholder="Name" />
-<br />
-<input id="desc" placeholder="Description" />
-<br />
+    <h2 class="mb-3">Add Item</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-<button type="button" id="addBtn">Add</button>
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input id="name" class="form-control" placeholder="Enter item name" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input id="desc" class="form-control" placeholder="Enter description" />
+            </div>
+
+            <button type="button" id="addBtn" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add Item
+            </button>
+
+            <a href="/Item/Index" class="btn btn-secondary ms-2">
+                Back
+            </a>
+        </div>
+    </div>
+</div>
 
 <script src="@Url.Content("~/Scripts/jquery-3.7.0.min.js")"></script>
 
