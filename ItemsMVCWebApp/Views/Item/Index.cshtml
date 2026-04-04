@@ -1,0 +1,29 @@
+﻿@model List<ItemsMVCWebApp.Models.Item>
+
+<h2>Items List</h2>
+
+<a href="/Item/Create">Add New Item</a>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td>
+                <a href="/Item/Edit/@item.Id">Edit</a>
+
+                <a href="/Item/Delete/@item.Id"
+                   onclick="return confirm('Are you sure you want to delete this item?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    }
+</table>

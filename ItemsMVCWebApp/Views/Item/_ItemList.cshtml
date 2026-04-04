@@ -1,0 +1,17 @@
+﻿
+@model List<ItemsMVCWebApp.Models.Item>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+        </tr>
+    }
+</table>
