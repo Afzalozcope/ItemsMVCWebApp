@@ -6,6 +6,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
+            <div id="alertBox" class="alert d-none" role="alert"></div>
             <div class="mb-3">
                 <label class="form-label">Name</label>
                 <input id="name" class="form-control" placeholder="Enter item name" />
@@ -30,6 +31,15 @@
 <script src="@Url.Content("~/Scripts/jquery-3.7.0.min.js")"></script>
 
 <script>
+    // show inline alert
+    function showValidation(message, type) {
+        var alertBox = $("#alertBox");
+        alertBox
+            .removeClass("d-none alert-success alert-danger")
+            .addClass("alert-" + type)
+            .text(message);
+    }
+
     $("#addBtn").click(function () {
 
         var item = {
@@ -38,7 +48,7 @@
         };
 
         if (!item.Name || !item.Description) {
-            alert("All fields required");
+            showValidations("All fields are required", "danger");
             return;
         }
 
@@ -46,11 +56,20 @@
             url: '/Item/AddItemAsync',
             type: 'POST',
             data: item,
-            success: function () {
-                window.location.href = "/Item/Index";
+            success: function (res) {
+
+                if (res.success)
+                {
+                    showValidation("Item added successfully!", "success");
+                    setTimeout(function () {
+                        window.location.href = "/Item/Index";
+                    }, 1000);
+                    return;
+                } 
+                showValidation("Failed to add item", "danger");
             },
             error: function () {
-                alert("Error saving item");
+                showValidation("Error saving item", "danger");
             }
         });
 

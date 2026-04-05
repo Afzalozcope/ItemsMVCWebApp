@@ -1,20 +1,21 @@
-﻿using System.Data.Entity;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsMVCWebApp.Models;
 
-public class ItemsApiController : ApiController
+public class ItemApiController : ApiController
 {
-    private AppDbContext db = new AppDbContext();
+    private readonly IItemRepository _repo;
+
+    public ItemApiController(IItemRepository repo)
+    {
+        _repo = repo;
+    }
 
     [HttpGet]
     [Route("api/items")]
     public async Task<IHttpActionResult> GetItems()
     {
-        var items = await db.Items
-                            .AsNoTracking()
-                            .ToListAsync();
-
+        var items = await _repo.GetAllAsync();
         return Ok(items);
     }
 
@@ -22,7 +23,7 @@ public class ItemsApiController : ApiController
     [Route("api/items/{id}")]
     public async Task<IHttpActionResult> GetItem(int id)
     {
-        var item = await db.Items.FindAsync(id);
+        var item = await _repo.GetByIdAsync(id);
 
         if (item == null)
         {
@@ -40,9 +41,7 @@ public class ItemsApiController : ApiController
             return BadRequest(ModelState);
         }
 
-        db.Items.Add(item);
-        await db.SaveChangesAsync();
-
+        await _repo.AddAsync(item);
         return Ok(item);
     }
 
@@ -54,15 +53,14 @@ public class ItemsApiController : ApiController
         {
             return BadRequest(ModelState);
         }
-        var existing = await db.Items.FindAsync(id);
+        var existing = await _repo.GetByIdAsync(id);
 
         if (existing == null)
         {
             return NotFound();
         }
-
         UpdateItem(item, existing);
-        await db.SaveChangesAsync();
+        await _repo.UpdateAsync(existing);
         return Ok(existing);
     }
 
@@ -70,26 +68,16 @@ public class ItemsApiController : ApiController
     [Route("api/items/{id}")]
     public async Task<IHttpActionResult> DeleteItem(int id)
     {
-        var item = await db.Items.FindAsync(id);
+        var existing = await _repo.GetByIdAsync(id);
 
-        if (item == null) 
+        if (existing == null)
         {
             return NotFound();
         }
-
-        db.Items.Remove(item);
-        await db.SaveChangesAsync();
+        await _repo.DeleteAsync(id);
         return Ok();
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            db.Dispose();
-        }
-        base.Dispose(disposing);
-    }
     private void UpdateItem(Item source, Item target)
     {
         target.Name = source.Name;

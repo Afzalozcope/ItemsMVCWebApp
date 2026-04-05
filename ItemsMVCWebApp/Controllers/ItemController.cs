@@ -1,18 +1,19 @@
-﻿using System.Data.Entity;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using ItemsMVCWebApp.Models;
 
 public class ItemController : Controller
 {
-    private AppDbContext db = new AppDbContext();
+    private readonly IItemRepository _repo;
+
+    public ItemController(IItemRepository repo)
+    {
+        _repo = repo;
+    }
 
     public async Task<ActionResult> Index()
     {
-        var items = await db.Items
-                            .AsNoTracking()
-                            .ToListAsync();
-
+        var items = await _repo.GetAllAsync();
         return View(items);
     }
 
@@ -24,18 +25,19 @@ public class ItemController : Controller
     [HttpPost]
     public async Task<ActionResult> AddItemAsync(Item item)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            db.Items.Add(item);
-            await db.SaveChangesAsync();
+            return Json(new { success = false });
         }
+
+        await _repo.AddAsync(item);
 
         return Json(new { success = true });
     }
 
     public async Task<ActionResult> Edit(int id)
     {
-        var item = await db.Items.FindAsync(id);
+        var item = await _repo.GetByIdAsync(id);
 
         if (item == null)
         {
@@ -48,31 +50,18 @@ public class ItemController : Controller
     [HttpPost]
     public async Task<ActionResult> Edit(Item item)
     {
-        db.Entry(item).State = EntityState.Modified;
-        await db.SaveChangesAsync();
-
+        if (!ModelState.IsValid)
+        {
+            return View(item);
+        }
+        await _repo.UpdateAsync(item);
         return RedirectToAction("Index");
     }
 
     [HttpPost]
     public async Task<ActionResult> Delete(int id)
     {
-        var item = await db.Items.FindAsync(id);
-
-        if (item != null)
-        {
-            db.Items.Remove(item);
-            await db.SaveChangesAsync();
-        }
-
+        await _repo.DeleteAsync(id);
         return RedirectToAction("Index");
-    }
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            db.Dispose();
-        }
-        base.Dispose(disposing);
     }
 }
