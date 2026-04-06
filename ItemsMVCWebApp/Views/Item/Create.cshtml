@@ -39,16 +39,16 @@
             .addClass("alert-" + type)
             .text(message);
     }
-
     $("#addBtn").click(function () {
-
+        $("#addBtn").prop("disabled", true);
         var item = {
             Name: $("#name").val(),
             Description: $("#desc").val()
         };
 
         if (!item.Name || !item.Description) {
-            showValidations("All fields are required", "danger");
+            showValidation("All fields are required", "danger");
+            $("#addBtn").prop("disabled", false);
             return;
         }
 
